@@ -20,11 +20,7 @@ fi
 # TODO: Fine-tune the way to customerize the threshold 
 for srcip in $( cat /var/log/ufw.log | grep -Pie "UFW BLOCK.*SRC=[0-9a-f:]+ " | sed -re 's/.*SRC=([a-f0-9:]+) .*/\1/ig' | cut -f1-6 -d: | sort | uniq -c | awk '{ if ( $1 > 2 ) print $2; }' | grep -v ${exclude_patt:--e ^fe80} )
 do
-  srcnet=$( echo "${srcip}" | sed -re 's/:0+/:/g' | tr -s ":" )
-  if ! ipset list ${ipset_name} | grep -q "${srcnet}"
-  then
-    ipset add ${ipset_name} ${srcip}::/96 -exist
-  fi
+  ipset add ${ipset_name} ${srcip}::/96 >dev/null 2>&1
 done
 
 
